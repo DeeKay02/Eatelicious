@@ -16,9 +16,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CutCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -27,9 +32,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -41,29 +47,6 @@ import com.learn.eatelicious.ui.theme.EateliciousTheme
 import com.learn.eatelicious.ui.theme.Purple40
 
 data class Restaurant(val name: String, val tagLine: String, val imageId: Int)
-
-val restaurants = listOf(
-    Restaurant("Belgian Waffles",
-        "The best in town!", R.drawable.restaurant_01),
-    Restaurant("Stomachful",
-        "Never leave hungry", R.drawable.restaurant_02),
-    Restaurant("Big Belly Noodles",
-        "Delicious noodles", R.drawable.restaurant_03),
-    Restaurant("Cakery",
-        "Cakes for every occasion", R.drawable.restaurant_04),
-    Restaurant("Pan Asia",
-        "The best Asian food", R.drawable.restaurant_05),
-    Restaurant("House of Pancakes",
-        "Best for breakfast", R.drawable.restaurant_06),
-    Restaurant("Sizzling Steakhouse",
-        "Come for the sizzle", R.drawable.restaurant_07),
-    Restaurant("Something fishy",
-        "Everything from the sea", R.drawable.restaurant_08),
-    Restaurant("Pasta Ya Gotcha",
-        "Pastas and more", R.drawable.restaurant_09),
-    Restaurant("Healthy and Yummy",
-        "Can't believe it's healthy!", R.drawable.restaurant_10),
-)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,6 +68,30 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RestaurantApp() {
+
+    val restaurants = remember { mutableStateListOf(
+        Restaurant("Belgian Waffles",
+            "The best in town!", R.drawable.restaurant_01),
+        Restaurant("Stomachful",
+            "Never leave hungry", R.drawable.restaurant_02),
+        Restaurant("Big Belly Noodles",
+            "Delicious noodles", R.drawable.restaurant_03),
+        Restaurant("Cakery",
+            "Cakes for every occasion", R.drawable.restaurant_04),
+        Restaurant("Pan Asia",
+            "The best Asian food", R.drawable.restaurant_05),
+        Restaurant("House of Pancakes",
+            "Best for breakfast", R.drawable.restaurant_06),
+        Restaurant("Sizzling Steakhouse",
+            "Come for the sizzle", R.drawable.restaurant_07),
+        Restaurant("Something fishy",
+            "Everything from the sea", R.drawable.restaurant_08),
+        Restaurant("Pasta Ya Gotcha",
+            "Pastas and more", R.drawable.restaurant_09),
+        Restaurant("Healthy and Yummy",
+            "Can't believe it's healthy!", R.drawable.restaurant_10),
+    )}
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -98,7 +105,7 @@ fun RestaurantApp() {
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { /*TODO*/ }) {
+            FloatingActionButton(onClick = { restaurants.add(restaurants.random()) }) {
                 Icon(Icons.Filled.Add, null)
             }
         }
@@ -110,11 +117,15 @@ fun RestaurantApp() {
 
 @Composable
 fun RestaurantCard(restaurant: Restaurant) {
-    Surface(
-        shape = MaterialTheme.shapes.medium,
-        shadowElevation = 3.dp,
-        color = Color.White,
-        modifier = Modifier.fillMaxWidth()
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = CutCornerShape(20.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 10.dp
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        )
     ) {
         Row(modifier = Modifier.padding(8.dp)) {
             Image(
@@ -150,7 +161,9 @@ fun RestaurantCard(restaurant: Restaurant) {
 
 @Composable
 fun RestaurantList(contentPaddingValues: PaddingValues, restaurants: List<Restaurant>) {
-    Column(modifier = Modifier.padding(contentPaddingValues)) {
+    Column(modifier = Modifier
+        .padding(contentPaddingValues)
+        .verticalScroll(rememberScrollState())) {
         for (restaurant in restaurants) {
             RestaurantCard(restaurant = restaurant)
         }
